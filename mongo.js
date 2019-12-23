@@ -1,14 +1,16 @@
+const bson = require('bson')
 const Query = require('./lib/query')
 const createConnection = require('./lib/connection')
+const authenticate = require('./lib/auth/authenticate')
 const { createClientInfo } = require('./lib/shared')
 const { parseBody } = require('./lib/response')
 
-// const credentials = {
-//     mechanism: 'default'
-//     , source: 'admin'
-//     , password: 'Kimagure232'
-//     , username: 'admin'
-// }
+const credentials = {
+    mechanism: 'default'
+    , source: 'admin'
+    , password: 'Kimagure232'
+    , username: 'admin'
+}
 
 const handshake = {
     ismaster: true
@@ -24,22 +26,27 @@ const queryOptions = {
 
 //db admin
 const ns = 'admin.$cmd'
-const queryHandshake = new Query(bson, ns, handshake, queryOptions)
+const auth = authenticate({}, credentials, (...args) => {
+    console.log(...args)
+})
+
+auth()
+// const queryHandshake = new Query(bson, ns, handshake, queryOptions)
 // const queryServerStatus = new Query(bson, ns, queryOptions)
 
-const connection = createConnection('localhost', 27017)
+// const connection = createConnection('localhost', 27017)
 
-connection.connect()
-    .then((data) => parseBody(bson, data, {
-        promoteBuffers: false
-        , promoteLongs: true
-        , promoteValues: true
-    }))
-    .then((data) => {
-        console.log(data)
-    })
-    .catch((err) => {
-        console.error(err)
-    })
+// connection.connect()
+//     .then((data) => parseBody(data, {
+//         promoteBuffers: false
+//         , promoteLongs: true
+//         , promoteValues: true
+//     }))
+//     .then((data) => {
+//         console.log(data)
+//     })
+//     .catch((err) => {
+//         console.error(err)
+//     })
 
-connection.write(queryHandshake.toBin())
+// connection.write(queryServerStatus.toBin())
