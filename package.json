@@ -10,6 +10,7 @@
   "license": "ISC",
   "dependencies": {
     "bson": "^4.0.2",
-    "mongodb": "^3.4.1"
+    "mongodb": "^3.4.1",
+    "saslprep": "^1.0.3"
   }
 }
