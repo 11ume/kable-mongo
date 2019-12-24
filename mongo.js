@@ -6,9 +6,10 @@ const { createClientInfo } = require('./lib/shared')
 const { parseBody } = require('./lib/response')
 
 const credentials = {
-    mechanism: 'default'
-    , source: 'admin'
+    mechanism: 'scram-sha-256'
+    , mechanismProperties: undefined
     , password: 'Kimagure232'
+    , source: 'admin'
     , username: 'admin'
 }
 
@@ -26,11 +27,14 @@ const queryOptions = {
 
 //db admin
 const ns = 'admin.$cmd'
-const auth = authenticate({}, credentials, (...args) => {
-    console.log(...args)
+const auth = authenticate({}, credentials, (err) => {
+    console.error(err)
 })
 
-auth()
+auth(function test(connection, db, saslStartCmd, callback) {
+    console.log(saslStartCmd)
+    callback()
+})
 // const queryHandshake = new Query(bson, ns, handshake, queryOptions)
 // const queryServerStatus = new Query(bson, ns, queryOptions)
 

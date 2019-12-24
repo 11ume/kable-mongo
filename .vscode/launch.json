@@ -7,7 +7,7 @@
         {
             "type": "node",
             "request": "launch",
-            "name": ":aunch current file",
+            "name": "Launch current file",
             "program": "${file}"
         },
         {

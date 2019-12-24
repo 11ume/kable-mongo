@@ -1,6 +1,6 @@
 const { MongoClient } = require('mongodb')
 //'mongodb://localhost:27017'
-const url = 'mongodb://admin:Kimagure232@localhost:27017/admin'
+const url = 'mongodb://admin:Kimagure232@192.168.0.2:27017/admin'
 const dbName = 'admin'
 
 MongoClient.connect(url, { useUnifiedTopology: true }, (err, client) => {
