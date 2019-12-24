@@ -7,14 +7,14 @@
         {
             "type": "node",
             "request": "launch",
-            "name": "Launch current file",
-            "program": "${file}"
+            "name": "Launch new client",
+            "program": "${workspaceFolder}\\client.js"
         },
         {
             "type": "node",
             "request": "launch",
-            "name": "Launch Program",
-            "program": "${workspaceFolder}\\client.js"
+            "name": "Launch classic client",
+            "program": "${workspaceFolder}\\classic-client.js"
         }
     ]
 }
