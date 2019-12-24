@@ -1,10 +1,13 @@
 const { MongoClient } = require('mongodb')
-// const url = 'mongodb://admin:Kimagure232@192.168.0.2:27017/admin'
-const url = 'mongodb://localhost:27017'
+const url = 'mongodb://admin:Kimagure232@192.168.0.2:27017/admin'
+// const url = 'mongodb://localhost:27017'
 const dbName = 'admin'
 
 MongoClient.connect(url, { useUnifiedTopology: true }, (err, client) => {
-    // const db = client.db(dbName).admin()
+    const db = client.db(dbName)
+    // db.collection('oplog.rs', console.log).find({ tailable: true })
+    db.collection('oplog.rs', console.log).watch()
+
     // db.command({ ping: 1 }).then((data) => {
     //     console.log(data)
     //     client.close()
