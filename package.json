@@ -3,13 +3,10 @@
   "version": "1.0.0",
   "description": "",
   "main": "client.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "author": "",
-  "license": "ISC",
   "dependencies": {
+    "arg": "^4.1.2",
     "bson": "^4.0.2",
+    "kable": "https://github.com/11ume/kable.git",
     "mongodb": "^3.4.1",
     "saslprep": "^1.0.3"
   }

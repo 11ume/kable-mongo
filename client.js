@@ -1,46 +1,43 @@
-const bson = require('bson')
-const Query = require('./lib/query')
-const createConnection = require('./lib/connection')
-const authenticate = require('./lib/auth/authenticate')
-const { createClientInfo } = require('./lib/shared')
+const arg = require('arg')
+const kable = require('kable')
+const uriParser = require('./node_modules/mongodb/lib/core/uri_parser')
+const client = require('mongodb').MongoClient
 
-const eventEmitter = require('events')
-const emitterHandler = new eventEmitter()
+const args = arg({
+    '--uri': String
+    , '-u': '--uri'
+    , '--id': String
+    , '-i': '--id'
+    , '--key': String
+    , '-k': '--key'
+})
 
-const credentials = {
-    mechanism: 'default'
-    // mechanism: 'scram-sha-256'
-    , mechanismProperties: undefined
-    // , password: 'Kimagure232'
-    , source: 'admin'
-    , username: 'admin'
+const connect = ({ uri, id = 'mongo', key = null }) => {
+    const options = { useUnifiedTopology: true }
+    let host = ''
+    let port = 0
+
+    uriParser(uri, options, (err, args) => {
+        if (err) throw err
+        const address = args.hosts[0]
+        if (address) {
+            host = address.host
+            port = address.port
+        }
+    })
+
+    const k = kable(id, { host, port, key })
+    client.connect(uri, options, (err, conn) => {
+        if (err) throw err
+        const db = conn.db('admin')
+        db.command({ ping: 1 }).then((data) => {
+            if (data.ok === 1) k.start()
+        })
+    })
 }
 
-const handshake = {
-    ismaster: true
-    , compression: []
-    , client: createClientInfo()
-    // , getSaslSupportedMechs: getSaslSupportedMechs(credentials.mechanism, credentials.username, credentials.source)
-}
-
-const queryOptions = {
-    numberToSkip: 0
-    , numberToReturn: 1
-}
-
-//db admin
-const ns = 'admin.$cmd'
-// const auth = authenticate(credentials, (err) => {
-//     console.error(err)
-// })
-
-// auth(function test(db, saslStartCmd, callback) {
-//     console.log(saslStartCmd)
-//     callback()
-// })
-const queryHandshake = new Query(bson, ns, handshake, queryOptions)
-// const queryServerStatus = new Query(bson, ns, queryOptions)
-
-const connection = createConnection(emitterHandler, { host: 'localhost', port: 27017 })
-connection.connect().catch(console.error)
-connection.write(queryHandshake.toBin())
+connect({
+    uri: 'mongodb://admin:Kimagure232@192.168.0.2:27017/admin' || args['--uri']
+    , id: args['--id']
+    , key: args['--key']
+})

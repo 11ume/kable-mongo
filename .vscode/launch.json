@@ -8,13 +8,7 @@
             "type": "node",
             "request": "launch",
             "name": "Launch new client",
-            "program": "${workspaceFolder}\\client.js"
-        },
-        {
-            "type": "node",
-            "request": "launch",
-            "name": "Launch classic client",
-            "program": "${workspaceFolder}/classic-client.js"
+            "program": "${workspaceFolder}/client.js"
         }
     ]
 }
