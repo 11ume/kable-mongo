@@ -1,4 +1,5 @@
 const kable = require('kable')
 const k = kable()
 k.start()
-k.on('advertisement', console.log) 
+k.on('advertisement', console.log)
+k.on('unregistre', console.log) 
