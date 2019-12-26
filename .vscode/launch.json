@@ -14,7 +14,7 @@
             "type": "node",
             "request": "launch",
             "name": "Launch classic client",
-            "program": "${workspaceFolder}\\classic-client.js"
+            "program": "${workspaceFolder}/classic-client.js"
         }
     ]
 }

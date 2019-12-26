@@ -1,22 +1,22 @@
 const { MongoClient } = require('mongodb')
-const url = 'mongodb://admin:Kimagure232@localhost:27017/admin'
+const url = 'mongodb://admin:Kimagure232@192.168.0.2:27017/admin'
 // const url = 'mongodb://localhost:27017'
 const dbName = 'admin'
-const selfIp = 'localhost'
-
-db.currentOp(true).inprog.forEach((d) => { print(d) })
+const wildcard = ['localhost', '0.0.0.0', '127.0.0.1']
 
 MongoClient.connect(url, { useUnifiedTopology: true }, (err, client) => {
     const db = client.db(dbName)
     // db.collection('oplog.rs', console.log).find({ tailable: true })
     db.executeDbAdminCommand({ "currentOp": 1, "$all": true }, (err, data) => {
-        const print = (conn) => console.log(conn.client, conn.connectionId)
-        const conn = data.inprog
-            .find((op) => {
-                return op.client && op.connectionId && op.client.split(':')[0] !== selfIp
-            })
-
-        print(conn)
+        // const print = (conn) => console.log(conn.client, conn.connectionId)
+        data.inprog.forEach((d) => {
+            if (d.client) {
+                const ip = d.client.split(':')[0]
+                if (ip !== wildcard) {
+                    console.log(d.client, d.connectionId)
+                }
+            }
+        })
     })
 
     // db.command({ ping: 1 }).then((data) => {
