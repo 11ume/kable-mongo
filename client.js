@@ -12,40 +12,14 @@ const args = arg({
     , '-k': '--key'
 })
 
-// db.command({ ping: 1 }).then((data) => {
-//     if (data.ok === 1) k.start()
-// })
-
-const connect = ({ k, uri, client, options }) => new Promise((resolve, reject) => {
+const connect = ({ uri, client, options }, callback) => {
     client.connect(uri, options, (err, conn) => {
-        if (err) return reject(err)
-        const db = conn.db('admin')
-
-        conn.once('error', (err) => {
-            k.stop()
-            reject(err)
-        })
-
-        conn.once('close', () => {
-            k.stop()
-            resolve()
-        })
-
-        conn.once('disconnected', () => {
-            k.stop()
-            reject()
-        })
-
-        db.command({ ping: 1 })
-            .then((data) => {
-                if (data.ok === 1) {
-                    k.start()
-                    resolve()
-                }
-            })
-            .catch(reject)
+        if (err) return callback(err, null)
+        conn.on('serverClosed', () => callback(null, 'closed'))
+        conn.on('serverHeartbeatSucceeded', () => callback(null, 'succeeded'))
+        callback(null, 'connected')
     })
-})
+}
 
 // se puede intentar connectar y ya estar connectado
 const start = ({ uri, id = 'mongo', key = null }) => {
@@ -63,16 +37,30 @@ const start = ({ uri, id = 'mongo', key = null }) => {
     })
 
     const k = kable(id, { host, port, key })
-    let retry = null
+    const connectArgs = { client: MongoClient, uri, options }
+    const call = (err, event) => {
+        if (event === 'succeeded') {
+            if (k.state !== 'UP') {
+                k.start()
+            }
+            return
+        }
 
-    const connectObj = { k, uri, client: MongoClient, options }
-    connect(connectObj)
-        .then(() => {
-            retry && clearInterval(retry)
-        })
-        .catch((err) => {
-            retry = setInterval(() => connect(connectObj), 2000)
-        })
+        if (err) {
+            k.stop()
+            connect(connectArgs, call)
+            return
+        }
+
+        if (event === 'closed') {
+            k.stop()
+            return
+        }
+
+        k.start()
+    }
+
+    connect(connectArgs, call)
 }
 
 start({
