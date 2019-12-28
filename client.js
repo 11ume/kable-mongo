@@ -35,6 +35,7 @@ const parseUri = (uriIn, opts) => {
 }
 
 const connect = (k, uri, options) => {
+    const waitToRetryTime = 2000
     let retry = false
     client.connect(uri, options, (err, conn) => {
         if (err) {
@@ -46,8 +47,8 @@ const connect = (k, uri, options) => {
             if (retry) return
             retry = true
             conn.close()
-            k.stop()
-            setTimeout(() => connect(k, uri, options), 2000)
+            k.stop('server closed')
+            setTimeout(() => connect(k, uri, options), waitToRetryTime)
         })
 
         k.start()
