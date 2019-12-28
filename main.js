@@ -38,14 +38,14 @@ const connect = (opts) => {
             retry = true
             conn.close()
             k.stop('server closed')
-            setTimeout(() => connect(opts))
+            setTimeout(() => connect(opts), opts.waitToRetryTime)
         })
 
         k.start()
     })
 }
 
-const run = ({ uri, id, waitToRetryTime = 2000, key = null }) => {
+const run = ({ uri, id, key = null, waitToRetryTime = 2000 }) => {
     const cliOptions = { useUnifiedTopology: true }
     const { host, port } = parseUri(uri, cliOptions)
     const k = kable(id, { host, port, key })

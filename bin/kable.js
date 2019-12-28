@@ -1,6 +1,8 @@
 const arg = require('arg')
+const path = require('path')
 const run = require('../main')
-const packageJson = require('../package.json')
+const handler = require('../handler')
+const { version } = require('../package.json')
 
 const args = arg({
     '--help': Boolean
@@ -27,7 +29,7 @@ if (args['--help']) {
       as the default entry_point.
   OPTIONS
       --help                              shows this help message
-      -v, --version                       displays the current used version of kable
+      -v, --version                       displays the current used version
       -u, --uri <mongo_uri>               specify a URI of Mongodb server
       -i, --id <node id>                  specify a unique id to indentificate this node
       -k, --key <key>                     specify a 32 character key to ensure the communication between all connected nodes
@@ -36,7 +38,7 @@ if (args['--help']) {
 }
 
 if (args['--version']) {
-    console.log(packageJson.dependencies.kable)
+    console.log(version)
     process.exit()
 }
 
@@ -44,8 +46,26 @@ if (!args['--uri']) {
     throw new Error('The arg --uri is required')
 }
 
-run({
-    id: args['--id']
-    , key: args['--key']
-    , uri: args['--uri']
-})
+let file = ''
+
+try {
+    const packageJson = require(path.resolve(process.cwd(), 'package.json'))
+    file = packageJson.main || 'index.js'
+} catch (err) {
+    if (err.code !== 'MODULE_NOT_FOUND') {
+        console.error(`Could not read \`package.json\`: ${err.message}`)
+        process.exit(1)
+    }
+}
+
+const start = async () => {
+    const k = await run({
+        uri: args['--uri']
+        , id: args['--id']
+        , key: args['--key']
+    });
+
+    (await handler(file))(k)
+}
+
+start()

@@ -7,11 +7,23 @@
         {
             "type": "node",
             "request": "launch",
-            "name": "Launch new client",
+            "name": "Launch client",
             "program": "${workspaceFolder}/main.js",
             "args": [
                 "--uri",
                 "mongodb://admin:Kimagure232@192.168.0.2:27017/admin"
+            ]
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Launch client bin",
+            "program": "${workspaceFolder}/bin/kable.js",
+            "args": [
+                "--uri",
+                "mongodb://admin:Kimagure232@192.168.0.2:27017/admin",
+                "--id",
+                "mongo"
             ]
         }
     ]
