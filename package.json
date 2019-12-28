@@ -1,11 +1,14 @@
 {
-  "name": "test",
+  "name": "kable-mongo-node",
   "version": "1.0.0",
   "description": "",
-  "main": "client.js",
+  "main": "main.js",
   "dependencies": {
     "arg": "^4.1.2",
     "kable": "https://github.com/11ume/kable.git",
     "mongodb": "^3.4.1"
+  },
+  "devDependencies": {
+    "ava": "^2.4.0"
   }
 }

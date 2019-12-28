@@ -1,7 +1,0 @@
-const kable = require('kable')
-const k = kable()
-k.run()
-k.on('advertisement', console.log)
-k.on('hello', console.log)
-k.on('unregistre', console.log)
-k.on('err', console.error)

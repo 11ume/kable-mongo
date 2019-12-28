@@ -1,6 +1,6 @@
 const arg = require('arg')
 const kable = require('kable')
-const uriParser = require('./node_modules/mongodb/lib/core/uri_parser')
+const uriParser = require('mongodb/lib/core/uri_parser')
 const client = require('mongodb').MongoClient
 
 const args = arg({
@@ -12,7 +12,7 @@ const args = arg({
     , '-k': '--key'
 })
 
-const uri = 'mongodb://admin:Kimagure232@192.168.0.2:27017/admin' || args['--uri']
+const uri = args['--uri']
 const options = { useUnifiedTopology: true }
 
 const parseUri = (uriIn, opts) => {
