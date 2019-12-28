@@ -1,19 +1,6 @@
-const arg = require('arg')
 const kable = require('kable')
 const uriParser = require('mongodb/lib/core/uri_parser')
 const client = require('mongodb').MongoClient
-
-const args = arg({
-    '--uri': String
-    , '-u': '--uri'
-    , '--id': String
-    , '-i': '--id'
-    , '--key': String
-    , '-k': '--key'
-})
-
-const uri = args['--uri']
-const options = { useUnifiedTopology: true }
 
 const parseUri = (uriIn, opts) => {
     let host = ''
@@ -34,12 +21,15 @@ const parseUri = (uriIn, opts) => {
     }
 }
 
-const connect = (k, uri, options) => {
-    const waitToRetryTime = 2000
+const connect = (opts) => {
+    const k = opts.k
+    const uri = opts.uri
+    const cliOptions = opts.cliOptions
     let retry = false
-    client.connect(uri, options, (err, conn) => {
+
+    client.connect(uri, cliOptions, (err, conn) => {
         if (err) {
-            connect(k, uri, options)
+            connect(opts)
             return
         }
 
@@ -48,21 +38,18 @@ const connect = (k, uri, options) => {
             retry = true
             conn.close()
             k.stop('server closed')
-            setTimeout(() => connect(k, uri, options), waitToRetryTime)
+            setTimeout(() => connect(opts))
         })
 
         k.start()
     })
 }
 
-const start = async ({ id = 'mongo', key = null }) => {
+const run = ({ uri, id, waitToRetryTime = 2000, key = null }) => {
+    const cliOptions = { useUnifiedTopology: true }
     const { host, port } = parseUri(uri, options)
     const k = kable(id, { host, port, key })
-    await k.run(true)
-    connect(k, uri, options)
+    return k.run(true).then(() => connect({ k, uri, waitToRetryTime, cliOptions }))
 }
 
-start({
-    id: args['--id']
-    , key: args['--key']
-})
+module.exports = run 
