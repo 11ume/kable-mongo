@@ -1,6 +1,6 @@
 const kable = require('kable')
-const uriParser = require('mongodb/lib/core/uri_parser')
 const client = require('mongodb').MongoClient
+const uriParser = require('mongodb/lib/core/uri_parser')
 
 const parseUri = (uriIn, opts) => {
     let host = ''
@@ -47,9 +47,12 @@ const connect = (opts) => {
 
 const run = ({ uri, id, waitToRetryTime = 2000, key = null }) => {
     const cliOptions = { useUnifiedTopology: true }
-    const { host, port } = parseUri(uri, options)
+    const { host, port } = parseUri(uri, cliOptions)
     const k = kable(id, { host, port, key })
-    return k.run(true).then(() => connect({ k, uri, waitToRetryTime, cliOptions }))
+    return k.run(true).then(() => {
+        connect({ k, uri, waitToRetryTime, cliOptions })
+        return k
+    })
 }
 
 module.exports = run 
