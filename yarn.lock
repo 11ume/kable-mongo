@@ -31,7 +31,7 @@ bson@^1.1.1:
 
 "kable@https://github.com/11ume/kable.git":
   version "0.0.2"
-  resolved "https://github.com/11ume/kable.git#4282e5f4ba0306ccbe6d2db6bc5012e90ce96867"
+  resolved "https://github.com/11ume/kable.git#e3ed981a8337e549d5d6bb31f88ca98eef80f687"
   dependencies:
     "@msgpack/msgpack" "^1.9.3"
     "@types/node" "^13.1.0"

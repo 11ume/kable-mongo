@@ -34,30 +34,30 @@ const parseUri = (uriIn, opts) => {
     }
 }
 
-const onSucces = (k) => k.state !== 'UP' && k.start()
-
-const onClosed = (k) => k.stop()
-
-const onConnect = (k) => k.start()
-
-const onError = (k, conn, _err) => {
-    // add stop reason to kable
-    k.stop()
-    conn(k, uri, options)
-}
-
 const connect = (k, uri, options) => {
+    let retry = false
     client.connect(uri, options, (err, conn) => {
-        if (err) return onError(k, connect, err)
-        conn.on('serverClosed', () => onClosed(k))
-        conn.on('serverHeartbeatSucceeded', () => onSucces(k))
-        onConnect(k)
+        if (err) {
+            connect(k, uri, options)
+            return
+        }
+
+        conn.on('serverClosed', () => {
+            if (retry) return
+            retry = true
+            conn.close()
+            k.stop()
+            setTimeout(() => connect(k, uri, options), 2000)
+        })
+
+        k.start()
     })
 }
 
-const start = ({ id = 'mongo', key = null }) => {
+const start = async ({ id = 'mongo', key = null }) => {
     const { host, port } = parseUri(uri, options)
     const k = kable(id, { host, port, key })
+    await k.run(true)
     connect(k, uri, options)
 }
 
