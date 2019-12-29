@@ -3,6 +3,9 @@
   "version": "0.0.1",
   "description": "Custom kable node prepared to work redundantly whit Mongodb server",
   "main": "algo.js",
+  "bin": {
+    "micro": "./bin/kable.js"
+  },
   "dependencies": {
     "arg": "^4.1.2",
     "kable": "https://github.com/11ume/kable.git",
