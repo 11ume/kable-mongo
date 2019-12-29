@@ -1,7 +1,7 @@
 const kable = require('kable')
 const client = require('mongodb').MongoClient
 const uriParser = require('mongodb/lib/core/uri_parser')
-const { description } = require('../package.json')
+const { description } = require('./package.json')
 
 const parseUri = (uriIn, opts) => {
     let host = ''
