@@ -1641,7 +1641,7 @@ json5@^2.1.0:
 
 "kable@https://github.com/11ume/kable.git":
   version "0.0.2"
-  resolved "https://github.com/11ume/kable.git#d6061dc7184129133b2037eed4746fb4f2bf5e8e"
+  resolved "https://github.com/11ume/kable.git#ba2554af4e2fcb9db20edfd96f310a6b2b347803"
   dependencies:
     "@msgpack/msgpack" "^1.9.3"
     "@types/node" "^13.1.0"
