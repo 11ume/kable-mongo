@@ -1,19 +1,21 @@
 const arg = require('arg')
 const path = require('path')
 const run = require('../main')
+const { existsSync } = require('fs')
 const { version } = require('../package.json')
 
 const args = arg({
     '--help': Boolean
     , '-h': '--help'
     , '--version': Boolean
-    , '-v': '--version'
     , '--uri': String
     , '-u': '--uri'
     , '--id': String
     , '-i': '--id'
     , '--key': String
     , '-k': '--key'
+    , '--verbose': Boolean
+    , '-v': '--verbose'
 })
 
 if (args['--help']) {
@@ -28,7 +30,8 @@ if (args['--help']) {
       as the default entry_point.
   OPTIONS
       --help                      shows this help message
-      -v, --version               displays the current used version
+      --version                   displays the current used version
+      -v, --verbose               start kable in verbose mode
       -u, --uri <mongo_uri>       specify a URI of Mongodb server
       -i, --id <node id>          specify a unique id to indentificate this node
       -k, --key <key>             specify a 32 character key to ensure the communication between all connected nodes
@@ -45,34 +48,32 @@ if (!args['--uri']) {
     throw new Error('The arg --uri is required')
 }
 
-let file = ''
-
-try {
-    const packageJson = require(path.resolve(process.cwd(), 'package.json'))
-    file = packageJson.main || 'index.js'
-} catch (err) {
-    if (err.code !== 'MODULE_NOT_FOUND') {
-        console.error(`Could not read \`package.json\`: ${err.message}`)
-        process.exit(1)
+const getModFileIndex = () => {
+    const main = 'index.js'
+    try {
+        const packageJson = require(path.resolve(process.cwd(), 'package.json'))
+        return packageJson.main || main
+    } catch (err) {
+        return main
     }
 }
 
-const mod = async (file) => {
+const mod = async (fileName) => {
     let modul
     try {
         // Await to support exporting Promises
-        modul = await require(`./${file}`)
+        modul = await require(path.resolve(process.cwd(), fileName))
         // Await to support es6 module's default export
         if (modul && typeof modul === 'object') {
             modul = await modul.default
         }
     } catch (err) {
-        console.error(`Error when importing ${file}: ${err.stack}`)
+        console.error(`Error when importing ${fileName}: ${err.stack}`)
         process.exit(1)
     }
 
     if (typeof modul !== 'function') {
-        console.error(`The file "${file}" does not export a function.`)
+        console.error(`The file "${fileName}" does not export a function.`)
         process.exit(1)
     }
 
@@ -84,9 +85,16 @@ const start = async () => {
         uri: args['--uri']
         , id: args['--id']
         , key: args['--key']
-    });
+        , verbose: args['--verbose']
+    })
 
-    (await mod(file))(k)
+    const fileName = getModFileIndex()
+    if (!existsSync(fileName)) {
+        console.error(`The file or directory "${path.basename(fileName)}" doesn't exist!`)
+        process.exit(1)
+    }
+
+    (await mod(fileName))(k)
 }
 
 start()
