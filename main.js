@@ -37,7 +37,7 @@ const connect = (opts) => {
             if (retry) return
             retry = true
             conn.close()
-            k.stop('server closed')
+            k.stop('The server closed the connection')
             setTimeout(() => connect(opts), opts.waitToRetryTime)
         })
 
@@ -50,7 +50,7 @@ const run = ({ uri, id, key = null, verbose = false, waitToRetryTime = 2000 }) =
     const { host, port } = parseUri(uri, cliOptions)
     const meta = {
         id: 'mongo-node'
-        , description: 'kable Mongodb node connector'
+        , description: 'kable mongodb node'
     }
     const k = kable(id, { host, port, key, verbose, meta })
     return k.run(true).then(() => {

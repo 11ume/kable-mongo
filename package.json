@@ -1,7 +1,7 @@
 {
   "name": "kable-mongo-node",
   "version": "0.0.1",
-  "description": "Custom kable node prepared to work redundantly whit Mongodb server",
+  "description": "Kable Mongodb node",
   "main": "algo.js",
   "bin": {
     "kable": "./bin/kable.js"

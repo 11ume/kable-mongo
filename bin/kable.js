@@ -46,7 +46,8 @@ if (args['--version']) {
 }
 
 if (!args['--uri']) {
-    throw new Error('The arg --uri is required')
+    console.error('The arg --uri is required')
+    process.exit(1)
 }
 
 const getModFileIndex = () => {
@@ -90,12 +91,7 @@ const start = async () => {
     })
 
     const fileName = getModFileIndex()
-    if (!existsSync(fileName)) {
-        console.error(`The file or directory "${path.basename(fileName)}" doesn't exist!`)
-        process.exit(1)
-    }
-
-    (await mod(fileName))(k)
+    if (existsSync(fileName)) (await mod(fileName))(k)
 }
 
 start()
