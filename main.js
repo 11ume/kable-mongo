@@ -48,7 +48,7 @@ const connect = (opts) => {
 const run = ({ uri, id, key = null, waitToRetryTime = 2000 }) => {
     const cliOptions = { useUnifiedTopology: true }
     const { host, port } = parseUri(uri, cliOptions)
-    const k = kable(id, { host, port, key })
+    const k = kable(id, { host, port, key, meta: Buffer.from('mongo-client') })
     return k.run(true).then(() => {
         connect({ k, uri, waitToRetryTime, cliOptions })
         return k
