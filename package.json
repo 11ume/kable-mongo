@@ -1,7 +1,7 @@
 {
-  "name": "kable-mongo-node",
+  "name": "kable-mongo",
   "version": "0.0.1",
-  "description": "Kable Mongodb node",
+  "description": "Kable node for Mongodb",
   "main": "algo.js",
   "bin": {
     "kable": "./bin/kable.js"
