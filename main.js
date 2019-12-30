@@ -40,7 +40,7 @@ const connect = (opts) => {
             conn.close()
             k.stop('The server closed the connection')
             setTimeout(() => {
-                k.starting()
+                k.waiting('Retrying connect to the server')
                 connect(opts)
             }, opts.waitToRetryTime)
         })
