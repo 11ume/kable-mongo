@@ -40,7 +40,7 @@ const connect = (opts) => {
             conn.close()
             k.stop('The server closed the connection')
             setTimeout(() => {
-                k.waiting('Retrying connect to the server')
+                k.doingSomething('Retrying connect to the server')
                 connect(opts)
             }, opts.waitToRetryTime)
         })
@@ -57,7 +57,8 @@ const run = ({ uri, id, key = null, verbose = false, waitToRetryTime = 2000 }) =
         , description
     }
     const k = kable(id, { host, port, key, verbose, meta })
-    return k.run(true).then(() => {
+    return k.run().then(() => {
+        k.doingSomething('Starting')
         connect({ k, uri, waitToRetryTime, cliOptions })
         return k
     })
