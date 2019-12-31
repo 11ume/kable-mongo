@@ -57,7 +57,7 @@ const run = ({ uri, id, key = null, verbose = false, waitToRetryTime = 2000 }) =
         , description
     }
     const k = kable(id, { host, port, key, verbose, meta })
-    return k.run().then(() => {
+    return k.run(false).then(() => {
         k.doingSomething('Starting')
         connect({ k, uri, waitToRetryTime, cliOptions })
         return k
