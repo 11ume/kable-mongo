@@ -22,15 +22,11 @@ const parseUri = (uriIn, opts) => {
     }
 }
 
-const connect = (opts) => {
-    const k = opts.k
-    const uri = opts.uri
-    const cliOptions = opts.cliOptions
+const connect = (k, options, config, uri) => {
     let retry = false
-
-    client.connect(uri, cliOptions, (err, conn) => {
+    client.connect(uri, config, (err, conn) => {
         if (err) {
-            connect(opts)
+            connect(k, options, config, uri)
             return
         }
 
@@ -40,26 +36,52 @@ const connect = (opts) => {
             conn.close()
             k.stop('The server closed the connection')
             setTimeout(() => {
-                k.doingSomething('Retrying connect to the server')
-                connect(opts)
-            }, opts.waitToRetryTime)
+                const { host, port } = options
+                k.doingSomething(`Retrying connect to the server in ${host}:${port}`)
+                connect(k, options, config, uri)
+            }, options.waitToRetryTime)
         })
 
         k.start()
     })
 }
 
-const run = ({ uri, id, key = null, verbose = false, waitToRetryTime = 2000 }) => {
-    const cliOptions = { useUnifiedTopology: true }
-    const { host, port } = parseUri(uri, cliOptions)
+const run = ({
+    uri
+    , id
+    , key = null
+    , verbose = false
+    , waitToRetryTime = 2000
+}) => {
+
+    const config = {
+        useUnifiedTopology: true
+    }
+
     const meta = {
         id: 'mongo-node'
         , description
     }
-    const k = kable(id, { host, port, key, verbose, meta })
+
+    const { host, port } = parseUri(uri, config)
+
+    const options = {
+        host
+        , port
+        , waitToRetryTime
+    }
+
+    const k = kable(id, {
+        host
+        , port
+        , key
+        , meta
+        , verbose
+    })
+
     return k.run(false).then(() => {
         k.doingSomething('Starting')
-        connect({ k, uri, waitToRetryTime, cliOptions })
+        connect(k, options, config, uri)
         return k
     })
 }
