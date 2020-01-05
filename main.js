@@ -1,26 +1,7 @@
 const kable = require('kable')
 const client = require('mongodb').MongoClient
-const uriParser = require('mongodb/lib/core/uri_parser')
+const { parseUri } = require('./lib/utils')
 const { description } = require('./package.json')
-
-const parseUri = (uriIn, opts) => {
-    let host = ''
-    let port = 0
-
-    uriParser(uriIn, opts, (err, args) => {
-        if (err) throw err
-        if (args.hosts && args.hosts[0]) {
-            const address = args.hosts[0]
-            host = address.host
-            port = address.port
-        }
-    })
-
-    return {
-        host
-        , port
-    }
-}
 
 function retry(k, options, config, uri) {
     const call = () => {

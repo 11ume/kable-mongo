@@ -32,7 +32,7 @@ if (args['--help']) {
         -v, --verbose               start kable in verbose mode
         -u, --uri <mongo_uri>       specify a URI of connection
         -i, --id <node id>          specify a unique id to indentificate this node
-        -k, --key <key>             specify a 32 character key to ensure the communication between all connected nodes         specify a 32 character key to ensure the communication between all connected nodes
+        -k, --key <key>             specify a 32 character key to ensure the communication between all connected nodes
 `)
     process.exit(2)
 }
@@ -47,7 +47,7 @@ if (!args['--uri']) {
     process.exit(1)
 }
 
-const getModFileIndex = () => {
+function getModFileIndex() {
     const main = 'index.js'
     try {
         const packageJson = require(path.resolve(process.cwd(), 'package.json'))
@@ -57,7 +57,7 @@ const getModFileIndex = () => {
     }
 }
 
-const mod = async (fileName) => {
+async function mod(fileName) {
     let modul
     try {
         // Await to support exporting Promises
@@ -79,7 +79,7 @@ const mod = async (fileName) => {
     return modul
 }
 
-const start = async () => {
+async function start() {
     const k = await run({
         uri: args['--uri']
         , id: args['--id']
