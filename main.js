@@ -22,8 +22,16 @@ const parseUri = (uriIn, opts) => {
     }
 }
 
-const connect = (k, options, config, uri) => {
-    let retry = false
+function retry(k, options, config, uri) {
+    const call = () => {
+        k.doingSomething(`Retrying connect to the server in ${options.host}:${options.port}`)
+        connect(k, options, config, uri)
+    }
+
+    setTimeout(call, options.waitToRetryTime)
+}
+
+function connect(k, options, config, uri) {
     client.connect(uri, config, (err, conn) => {
         if (err) {
             connect(k, options, config, uri)
@@ -31,28 +39,23 @@ const connect = (k, options, config, uri) => {
         }
 
         conn.on('serverClosed', () => {
-            if (retry) return
-            retry = true
-            conn.close()
+            if (k.state === 'STOPPED') return
             k.stop('The server closed the connection')
-            setTimeout(() => {
-                const { host, port } = options
-                k.doingSomething(`Retrying connect to the server in ${host}:${port}`)
-                connect(k, options, config, uri)
-            }, options.waitToRetryTime)
+            conn.close()
+            retry(k, options, config, uri)
         })
 
         k.start()
     })
 }
 
-const run = ({
+function run({
     uri
     , id
     , key = null
     , verbose = false
     , waitToRetryTime = 2000
-}) => {
+}) {
 
     const config = {
         useUnifiedTopology: true
