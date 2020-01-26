@@ -34,7 +34,6 @@ function run({
     uri
     , id
     , key = null
-    , verbose = false
     , waitToRetryTime = 2000
 }) {
 
@@ -60,10 +59,9 @@ function run({
         , port
         , key
         , meta
-        , verbose
     })
 
-    return k.run(false).then(() => {
+    return k.up(false).then(() => {
         k.doing('Starting')
         connect(k, options, config, uri)
         return k

@@ -8,8 +8,8 @@
   },
   "dependencies": {
     "arg": "^4.1.2",
-    "kable": "https://github.com/11ume/kable.git",
-    "mongodb": "^3.4.1"
+    "mongodb": "^3.4.1",
+    "kable": "https://github.com/11ume/kable.git"
   },
   "devDependencies": {
     "ava": "^2.4.0"
