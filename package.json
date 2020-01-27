@@ -12,6 +12,6 @@
     "kable": "https://github.com/11ume/kable.git"
   },
   "devDependencies": {
-    "ava": "^2.4.0"
+    "ava": "^3.1.0"
   }
 }
