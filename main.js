@@ -1,4 +1,4 @@
-const kable = require('kable')
+const kable = require('kable-core')
 const client = require('mongodb').MongoClient
 const { parseUri } = require('./lib/utils')
 const { description } = require('./package.json')
@@ -18,14 +18,12 @@ function connect(k, options, config, uri) {
             connect(k, options, config, uri)
             return
         }
-
         conn.on('serverClosed', () => {
             if (k.state === 'STOPPED') return
             k.stop('The server closed the connection')
             conn.close()
             retry(k, options, config, uri)
         })
-
         k.start()
     })
 }
@@ -36,24 +34,19 @@ function run({
     , key = null
     , waitToRetryTime = 2000
 }) {
-
     const config = {
         useUnifiedTopology: true
     }
-
     const meta = {
         id: 'mongo-node'
         , description
     }
-
     const { host, port } = parseUri(uri, config)
-
     const options = {
         host
         , port
         , waitToRetryTime
     }
-
     const k = kable(id, {
         host
         , port

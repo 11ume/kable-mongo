@@ -9,7 +9,7 @@
   "dependencies": {
     "arg": "^4.1.2",
     "mongodb": "^3.4.1",
-    "kable": "https://github.com/11ume/kable.git"
+    "kable-core": "https://github.com/11ume/kable-core.git"
   },
   "devDependencies": {
     "ava": "^2.4.0"
